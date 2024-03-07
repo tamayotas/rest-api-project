@@ -1,5 +1,5 @@
 import json
-import jsonschema as jsonschema
+import jsonschema
 from allure_commons.types import Severity
 
 from rest_api_project.utils.api_helper import api_request
@@ -16,11 +16,12 @@ def test_creation_of_user(get_base_api_url):
     body = json.loads('{"email": "eve.holt@reqres.in", "password": "pistol"}')
 
     response = api_request(get_base_api_url, endpoint="/register", method="POST", data=body)
+    resp_body = response.json()
 
     assert response.status_code == 200
     assert response.json()["id"] == 4
 
-    jsonschema.validate(instance=response.json(), schema=schema)
+    jsonschema.validate(resp_body, schema)
 
 
 @allure.title("Создание пользователя с незаполненным email")

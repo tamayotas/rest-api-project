@@ -1,6 +1,6 @@
 import allure
 import pytest
-import jsonschema as jsonschema
+import jsonschema
 from allure_commons.types import Severity
 
 from rest_api_project.utils.api_helper import api_request
@@ -17,10 +17,11 @@ def test_get_list_users_with_page_id(get_base_api_url, id_):
     schema = load_schema("list_users.json")
 
     response = api_request(get_base_api_url, endpoint="/users", method="GET", params=params)
+    resp_body = response.json()
 
     assert response.status_code == 200
     assert response.json()["page"] == id_
-    jsonschema.validate(instance=response.json(), schema=schema)
+    jsonschema.validate(resp_body, schema)
 
 
 @allure.title("Получение списка пользователей с неверным параметром")
@@ -33,10 +34,11 @@ def test_get_list_users_with_wrong_parameter(get_base_api_url):
     params = {"pe": page_id}
 
     response = api_request(get_base_api_url, endpoint="/users", method="GET", params=params)
+    resp_body = response.json()
 
     assert response.status_code == 200
     assert response.json()["page"] == 1
-    jsonschema.validate(instance=response.json(), schema=schema)
+    jsonschema.validate(resp_body, schema)
 
 
 @allure.title("Получение списка пользователей с несуществующим значением параметра")
@@ -50,7 +52,8 @@ def test_get_list_users_with_nonexistent_parameter(get_base_api_url):
     schema = load_schema("list_users_with_nonexistent_parameter.json")
 
     response = api_request(get_base_api_url, endpoint="/users", method="GET", params=params)
+    resp_body = response.json()
 
     assert response.status_code == 200
     assert response.json()["page"] == page_id
-    jsonschema.validate(instance=response.json(), schema=schema)
+    jsonschema.validate(resp_body, schema)
